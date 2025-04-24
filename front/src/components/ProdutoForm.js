@@ -1,74 +1,83 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import api from "../service/api";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Importando o estilo da biblioteca
+import "react-toastify/dist/ReactToastify.css";
+
+// Definindo o fundo da página
+const GlobalStyle = createGlobalStyle`
+  body {
+    background: linear-gradient(135deg, #1e1e2f, #21224d);  /* Alterar a cor do fundo aqui */
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0e0e0;
+  }
+`;
 
 const Form = styled.form`
-  background: rgb(90, 90, 90);
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: 50px auto;
-  font-family: 'Arial', sans-serif;
-  color: #fff;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  max-width: 520px;
+  margin: 60px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #e0e0e0;
 `;
 
 const Title = styled.h2`
   text-align: center;
-  margin-bottom: 24px;
-  font-size: 2rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #fff;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #00ffd5;
+  text-shadow: 0 0 5px rgba(0, 255, 213, 0.6);
 `;
 
 const Field = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 `;
 
 const Label = styled.label`
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: 600;
-  color: #ddd;
+  color: #d1d1d1;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: none;
+  border-radius: 16px;
   font-size: 1rem;
-  color: #333;
-  background: #fff;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: #1e1e1e;
+  background: #f2f2f2;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 
   &:focus {
-    border-color: #0070f3;
-    box-shadow: 0 0 8px rgba(0, 112, 243, 0.3);
     outline: none;
+    box-shadow: 0 0 8px #00ffd5;
+    background: #ffffff;
   }
 `;
 
 const Submit = styled.button`
   width: 100%;
-  padding: 14px;
-  background: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  padding: 16px;
+  background: #00ffd5;
+  color: #000;
   font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    background: #005bd1;
-    transform: scale(1.05);
+    background: #00ccaa;
+    transform: scale(1.04);
   }
 
   &:active {
@@ -99,14 +108,12 @@ function ProdutoForm({ produto, onProdutoAdicionado, setProdutoParaEditar }) {
 
     try {
       if (produto) {
-        // Editar produto
         await api.put(`produtos/${produto.id}/`, dados);
         setProdutoParaEditar(null);
-        toast.success("Produto atualizado com sucesso!");  // Notificação de sucesso
+        toast.success("Produto atualizado com sucesso!");
       } else {
-        // Adicionar produto
         await api.post("produtos/", dados);
-        toast.success("Produto adicionado com sucesso!");  // Notificação de sucesso
+        toast.success("Produto adicionado com sucesso!");
       }
       onProdutoAdicionado();
       setNome("");
@@ -114,12 +121,13 @@ function ProdutoForm({ produto, onProdutoAdicionado, setProdutoParaEditar }) {
       setEstoque("");
     } catch (err) {
       console.error("Erro ao salvar produto", err);
-      toast.error("Erro ao salvar o produto!");  // Notificação de erro
+      toast.error("Erro ao salvar o produto!");
     }
   };
 
   return (
     <>
+      <GlobalStyle /> {/* Adiciona o estilo global para o background */}
       <Form onSubmit={handleSubmit}>
         <Title>{produto ? "Editar Produto" : "Adicionar Produto"}</Title>
 
@@ -159,7 +167,7 @@ function ProdutoForm({ produto, onProdutoAdicionado, setProdutoParaEditar }) {
         </Submit>
       </Form>
 
-      <ToastContainer />  {/* Adiciona o container de notificações */}
+      <ToastContainer />
     </>
   );
 }

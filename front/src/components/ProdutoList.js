@@ -5,63 +5,74 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Container = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 24px;
+  background: linear-gradient(145deg, #1c1f26, #20242c);
+  border-radius: 16px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
 `;
 
 const Title = styled.h1`
   text-align: center;
-  margin-bottom: 24px;
-  font-size: 2rem;
-  color: #333;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #c3ffb0;
+  text-shadow: 0 0 8px rgba(0, 255, 150, 0.2);
 `;
 
 const Table = styled.table`
   width: 100%;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-radius: 4px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: #f0f0f0;
+  background: #292e38;
+  border-radius: 12px;
   overflow: hidden;
 `;
 
 const Thead = styled.thead`
-  background: #f0f0f0;
+  background-color: #374151;
 `;
 
 const Th = styled.th`
-  padding: 12px;
-  text-align: left;
+  padding: 16px;
   font-weight: 600;
-  border-bottom: 1px solid #ddd;
+  text-align: left;
+  color: #93c5fd;
 `;
 
 const Tr = styled.tr`
   &:nth-child(even) {
-    background: #fafafa;
+    background: #2d333d;
   }
   &:hover {
-    background: #f5f5f5;
+    background: #3b3f49;
   }
 `;
 
 const Td = styled.td`
-  padding: 12px;
-  border-bottom: 1px solid #eee;
+  padding: 14px 16px;
+  border-bottom: 1px solid #444c56;
 `;
 
 const ActionButton = styled.button`
-  padding: 6px 12px;
+  padding: 8px 14px;
   margin-right: 8px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   color: white;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
 
-  background: ${props => props.variant === "edit" ? "#0070f3" : "#d0021b"};
+  background: ${({ variant }) =>
+    variant === "edit" ? "#7c3aed" : "#ef4444"};
 
   &:hover {
-    background: ${props => props.variant === "edit" ? "#005bd1" : "#a00119"};
+    background: ${({ variant }) =>
+      variant === "edit" ? "#6b21a8" : "#dc2626"};
   }
 `;
 
@@ -71,31 +82,35 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 15, 15, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const Modal = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
+  background: #1e293b;
+  padding: 30px 20px;
+  border-radius: 12px;
+  width: 320px;
   text-align: center;
+  color: #fff;
 `;
 
 const ModalButton = styled.button`
-  padding: 8px 16px;
-  margin: 10px;
+  padding: 10px 18px;
+  margin: 10px 8px 0;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  background: ${props => props.variant === "confirm" ? "#28a745" : "#dc3545"};
-  color: white;
+  font-weight: 600;
+  background: ${({ variant }) =>
+    variant === "confirm" ? "#10b981" : "#ef4444"};
+  color: #fff;
 
   &:hover {
-    background: ${props => props.variant === "confirm" ? "#218838" : "#c82333"};
+    background: ${({ variant }) =>
+      variant === "confirm" ? "#059669" : "#dc2626"};
   }
 `;
 
@@ -119,14 +134,12 @@ function ProdutoList({ refresh, onEditar }) {
       await api.delete(`produtos/${produtoExcluir.id}/`);
       toast.success("Produto excluído com sucesso!");
 
-      // Atualizar a lista de produtos após a exclusão
       const { data } = await api.get("produtos/");
       setProdutos(data);
-
-      setProdutoExcluir(null); // Fechar modal após exclusão
+      setProdutoExcluir(null);
     } catch (err) {
       toast.error("Erro ao excluir produto!");
-      setProdutoExcluir(null); // Fechar modal se ocorrer erro
+      setProdutoExcluir(null);
     }
   };
 
@@ -143,7 +156,7 @@ function ProdutoList({ refresh, onEditar }) {
           </Tr>
         </Thead>
         <tbody>
-          {produtos.map(p => (
+          {produtos.map((p) => (
             <Tr key={p.id}>
               <Td>{p.nome}</Td>
               <Td>R$ {p.preco}</Td>
@@ -154,7 +167,7 @@ function ProdutoList({ refresh, onEditar }) {
                 </ActionButton>
                 <ActionButton
                   variant="delete"
-                  onClick={() => setProdutoExcluir(p)} // Abre o modal para confirmação
+                  onClick={() => setProdutoExcluir(p)}
                 >
                   Excluir
                 </ActionButton>
@@ -164,13 +177,12 @@ function ProdutoList({ refresh, onEditar }) {
         </tbody>
       </Table>
 
-      {/* Modal de confirmação de exclusão */}
       {produtoExcluir && (
         <ModalOverlay>
           <Modal>
-            <h3>Tem certeza que deseja excluir o produto?</h3>
+            <h3>Confirmar exclusão?</h3>
             <ModalButton variant="confirm" onClick={handleExcluir}>
-              Sim, Excluir
+              Sim
             </ModalButton>
             <ModalButton variant="cancel" onClick={() => setProdutoExcluir(null)}>
               Cancelar
@@ -179,17 +191,7 @@ function ProdutoList({ refresh, onEditar }) {
         </ModalOverlay>
       )}
 
-      <ToastContainer 
-        position="top-right" 
-        autoClose={5000} 
-        hideProgressBar={false} 
-        newestOnTop={true} 
-        closeOnClick
-        rtl={false} 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
-      /> 
+      <ToastContainer position="top-right" autoClose={4000} />
     </Container>
   );
 }
